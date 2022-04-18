@@ -8,9 +8,19 @@ import {
   MeshBasicMaterial,
   Clock,
 } from 'three';
-import gsap from 'gsap';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 const renderer = (targetDom) => {
+  let cursor = {
+    x: 0,
+    y: 0,
+  };
+
+  window.addEventListener('mousemove', (event) => {
+    cursor.x = event.clientX / window.innerWidth - 0.5;
+    cursor.x = event.clientY / window.innerHeight - 0.5;
+  });
+
   // Objects
   const mesh = new Mesh(
     new BoxGeometry(1, 1, 1),
@@ -20,7 +30,9 @@ const renderer = (targetDom) => {
   // Camera
   const camera = new PerspectiveCamera(
     70,
-    window.innerWidth / window.innerHeight
+    window.innerWidth / window.innerHeight,
+    0.1,
+    100
   );
   camera.position.z = 3;
 
@@ -32,14 +44,20 @@ const renderer = (targetDom) => {
   scene.add(mesh);
   scene.add(camera);
 
-  gsap.to(mesh.position, { duration: 1, delay: 1, x: 2 });
-  gsap.to(mesh.position, { duration: 1, delay: 2, x: 0 });
+  const controls = new OrbitControls(camera, targetDom);
+  controls.enableDamping = true;
 
   const animation = () => {
     // const elapsedTime = clock.getElapsedTime();
-    // camera.position.y = Math.sin(elapsedTime);
-    // camera.position.x = Math.cos(elapsedTime);
+
+    // Update camera
+    // camera.position.x = Math.cos(cursor.x * Math.PI * 2) * 3;
+    // camera.position.y = cursor.y * 5;
+    // camera.position.z = Math.sin(cursor.x * Math.PI * 2) * 3;
+    // // camera.position.x = Math.cos(elapsedTime);
     // camera.lookAt(mesh.position);
+
+    controls.update();
 
     renderer.render(scene, camera);
   };
