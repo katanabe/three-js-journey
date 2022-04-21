@@ -18,7 +18,7 @@ const renderer = (targetDom) => {
 
   window.addEventListener('mousemove', (event) => {
     cursor.x = event.clientX / window.innerWidth - 0.5;
-    cursor.x = event.clientY / window.innerHeight - 0.5;
+    cursor.y = event.clientY / window.innerHeight - 0.5;
   });
 
   // Objects
