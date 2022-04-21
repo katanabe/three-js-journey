@@ -6,7 +6,6 @@ import {
   PerspectiveCamera,
   WebGLRenderer,
   MeshBasicMaterial,
-  Clock,
 } from 'three';
 import gsap from 'gsap';
 
