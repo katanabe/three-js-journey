@@ -5,7 +5,7 @@ import {
   MeshStandardMaterial,
   AmbientLight,
   Clock,
-  TextureLoader,
+  // TextureLoader,
   PlaneBufferGeometry,
   TorusBufferGeometry,
   SphereBufferGeometry,
