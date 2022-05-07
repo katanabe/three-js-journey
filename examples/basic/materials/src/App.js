@@ -17,6 +17,7 @@ import {
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as lil from 'lil-gui';
 import { CubeTextureLoader } from 'three';
+import { AxisHelper } from 'three';
 
 const gui = new lil.GUI();
 
