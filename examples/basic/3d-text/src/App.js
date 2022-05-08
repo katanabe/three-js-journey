@@ -6,11 +6,13 @@ import {
   PerspectiveCamera,
   WebGLRenderer,
   MeshBasicMaterial,
+  TextureLoader,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
+import { TorusBufferGeometry, MeshMatcapMaterial } from 'three';
 
 const renderer = (targetDom) => {
   let cursor = {
@@ -23,6 +25,17 @@ const renderer = (targetDom) => {
     cursor.y = event.clientY / window.innerHeight - 0.5;
   });
 
+  const texureLoader = new TextureLoader();
+  // const matcapTexure = texureLoader.load('/textures/matcaps/1.png');
+
+  // const matcapTexure = texureLoader.load('/textures/matcaps/2.png');
+  // const matcapTexure = texureLoader.load('/textures/matcaps/3.png');
+  // const matcapTexure = teureLoadetexr.load('/textures/matcaps/4.png');
+  // const matcapTexure = texureLoader.load('/textures/matcaps/5.png');
+  // const matcapTexure = texureLoader.load('/textures/matcaps/6.png');
+  // const matcapTexure =  texureLoader.load('/textures/matcaps/7.png');
+  const matcapTexure = texureLoader.load('/textures/matcaps/8.png');
+
   const fontLoader = new FontLoader();
   fontLoader.load('/fonts//helvetiker_regular.typeface.json', (font) => {
     console.log(font);
@@ -31,7 +44,7 @@ const renderer = (targetDom) => {
       font,
       size: 0.5,
       height: 0.2,
-      curveSegments: 12,
+      curveSegments: 7,
       bevelEnabled: true,
       bevelThickness: 0.03,
       bevelSize: 0.02,
@@ -48,11 +61,34 @@ const renderer = (targetDom) => {
 
     textGeometry.center();
 
-    const textMaterial = new MeshBasicMaterial();
-    textMaterial.wireframe = true;
-
+    // const donutGeometry = new TorusBufferGeometry(0.3, 0.2, 20, 45);
+    const textMaterial = new MeshMatcapMaterial({ matcap: matcapTexure });
     const text = new Mesh(textGeometry, textMaterial);
     scene.add(text);
+
+    console.time('donuts');
+
+    const donutsGeometry = new TorusBufferGeometry(0.3, 0.2, 30, 45);
+    const donutsMaterial = new MeshMatcapMaterial({
+      matcap: matcapTexure,
+    });
+
+    for (let i = 0; i < 1000; i++) {
+      const donuts = new Mesh(donutsGeometry, donutsMaterial);
+      donuts.position.x = (Math.random() - 0.5) * 10;
+      donuts.position.y = (Math.random() - 0.5) * 10;
+      donuts.position.z = (Math.random() - 0.5) * 10;
+
+      donuts.rotation.x = Math.random() * Math.PI;
+      donuts.rotation.y = Math.random() * Math.PI;
+
+      const scale = Math.random();
+      donuts.scale.set(scale, scale, scale);
+
+      scene.add(donuts);
+    }
+
+    console.timeEnd('donuts');
   });
 
   // Camera
