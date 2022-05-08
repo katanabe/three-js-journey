@@ -5,10 +5,8 @@ import {
   Mesh,
   PerspectiveCamera,
   WebGLRenderer,
-  MeshNormalMaterial,
   MeshBasicMaterial,
   AxesHelper,
-  Vector3,
   Group,
 } from 'three';
 
