@@ -21,7 +21,7 @@ import { Clock } from 'three';
 
 const renderer = (targetDom) => {
   const textureLoader = new TextureLoader();
-  const bakedShadow = textureLoader.load('/textures/bakedShadow.jpg');
+  //const bakedShadow = textureLoader.load('/textures/bakedShadow.jpg');
   const simplShadow = textureLoader.load('/textures/simpleShadow.jpg');
 
   // Debug
