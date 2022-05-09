@@ -9,7 +9,7 @@ import {
   Scene,
   PerspectiveCamera,
   WebGLRenderer,
-  Clock,
+  // Clock,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as lil from 'lil-gui';
@@ -20,9 +20,6 @@ const renderer = (targetDom) => {
    */
   // Debug
   const gui = new lil.GUI();
-
-  // Canvas
-  const canvas = document.querySelector('canvas.webgl');
 
   // Scene
   const scene = new Scene();
@@ -107,10 +104,10 @@ const renderer = (targetDom) => {
   /**
    * Animate
    */
-  const clock = new Clock();
+  // const clock = new Clock();
 
   const animation = () => {
-    const elapsedTime = clock.getElapsedTime();
+    // const elapsedTime = clock.getElapsedTime();
 
     // Update controls
     controls.update();
