@@ -1,63 +1,49 @@
-import { useEffect, useRef } from 'react';
-import {
-  SphereBufferGeometry,
-  Raycaster,
-  Vector3,
-  MeshBasicMaterial,
-  Mesh,
-  Scene,
-  PerspectiveCamera,
-  WebGLRenderer,
-  Clock,
-} from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import * as lil from 'lil-gui';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import * as dat from 'lil-gui';
+import { useRef, useEffect } from 'react';
 
-const renderer = (targetDom) => {
+function renderer(targetDom) {
+  /**
+   * Base
+   */
   // Debug
-  const gui = new lil.GUI();
+  const gui = new dat.GUI();
 
   // Scene
-  const scene = new Scene();
-
-  /**
-   * Materials
-   */
+  const scene = new THREE.Scene();
 
   /**
    * Objects
    */
-  const object1 = new Mesh(
-    new SphereBufferGeometry(0.5, 16, 16),
-    new MeshBasicMaterial({ color: '#ff0000' })
+  const object1 = new THREE.Mesh(
+    new THREE.SphereGeometry(0.5, 16, 16),
+    new THREE.MeshBasicMaterial({ color: '#ff0000' })
   );
   object1.position.x = -2;
 
-  const object2 = new Mesh(
-    new SphereBufferGeometry(0.5, 16, 16),
-    new MeshBasicMaterial({ color: '#ff0000' })
+  const object2 = new THREE.Mesh(
+    new THREE.SphereGeometry(0.5, 16, 16),
+    new THREE.MeshBasicMaterial({ color: '#ff0000' })
   );
 
-  const object3 = new Mesh(
-    new SphereBufferGeometry(0.5, 16, 16),
-    new MeshBasicMaterial({ color: '#ff0000' })
+  const object3 = new THREE.Mesh(
+    new THREE.SphereGeometry(0.5, 16, 16),
+    new THREE.MeshBasicMaterial({ color: '#ff0000' })
   );
   object3.position.x = 2;
 
   scene.add(object1, object2, object3);
 
-  const raycaster = new Raycaster();
-  const rayOrigin = new Vector3(-3, 0, 0);
-  const rayDirection = new Vector3(10, 0, 0);
+  /**
+   * Raycaster
+   */
+  const raycaster = new THREE.Raycaster();
+  let currentIntersect = null;
+  const rayDirection = new THREE.Vector3(10, 0, 0);
   rayDirection.normalize();
 
-  raycaster.set(rayOrigin, rayDirection);
-
-  const intersect = raycaster.intersectObject(object2);
-  console.log(intersect);
-
-  const intersects = raycaster.intersectObjects([object1, object2, object3]);
-  console.log(intersects);
+  // raycaster.set(rayOrigin, rayDirection)
 
   /**
    * Sizes
@@ -82,17 +68,47 @@ const renderer = (targetDom) => {
   });
 
   /**
+   * Mouse
+   */
+  const mouse = new THREE.Vector2();
+
+  window.addEventListener('mousemove', (event) => {
+    mouse.x = (event.clientX / sizes.width) * 2 - 1;
+    mouse.y = -(event.clientY / sizes.height) * 2 + 1;
+  });
+
+  window.addEventListener('click', () => {
+    if (currentIntersect) {
+      switch (currentIntersect.object) {
+        case object1:
+          console.log('click on object 1');
+          currentIntersect.object.material.color.set('#0000ff');
+          break;
+
+        case object2:
+          console.log('click on object 2');
+          currentIntersect.object.material.color.set('#0000ff');
+          break;
+
+        case object3:
+          console.log('click on object 3');
+          currentIntersect.object.material.color.set('#0000ff');
+          break;
+      }
+    }
+  });
+
+  /**
    * Camera
    */
-  const camera = new PerspectiveCamera(
+  // Base camera
+  const camera = new THREE.PerspectiveCamera(
     75,
     sizes.width / sizes.height,
     0.1,
     100
   );
-  camera.position.x = 1;
-  camera.position.y = 1;
-  camera.position.z = 2;
+  camera.position.z = 3;
   scene.add(camera);
 
   // Controls
@@ -102,26 +118,91 @@ const renderer = (targetDom) => {
   /**
    * Animate
    */
-  const clock = new Clock();
+  const clock = new THREE.Clock();
 
-  const animation = () => {
+  const tick = () => {
     const elapsedTime = clock.getElapsedTime();
 
-    object1.position.y = Math.sin(elapsedTime);
+    // Animate objects
+    object1.position.y = Math.sin(elapsedTime * 0.3) * 1.5;
+    object2.position.y = Math.sin(elapsedTime * 0.8) * 1.5;
+    object3.position.y = Math.sin(elapsedTime * 1.4) * 1.5;
+
+    // Cast a fixed ray
+    // const rayOrigin = new THREE.Vector3(- 3, 0, 0)
+    // const rayDirection = new THREE.Vector3(1, 0, 0)
+    // rayDirection.normalize()
+
+    // raycaster.set(rayOrigin, rayDirection)
+
+    // const objectsToTest = [object1, object2, object3]
+    // const intersects = raycaster.intersectObjects(objectsToTest)
+
+    // for(const intersect of intersects)
+    // {
+    //     intersect.object.material.color.set('#0000ff')
+    // }
+
+    // Cast a ray from the mouse
+    // raycaster.setFromCamera(mouse, camera)
+
+    // const intersects = raycaster.intersectObjects(objectsToTest)
+
+    // for(const intersect of intersects)
+    // {
+    //     intersect.object.material.color.set('#0000ff')
+    // }
+
+    // for(const object of objectsToTest)
+    // {
+    //     if(!intersects.find(intersect => intersect.object === object))
+    //     {
+    //         object.material.color.set('#ff0000')
+    //     }
+    // }
+
+    // Cast a ray from the mouse and handle events
+    raycaster.setFromCamera(mouse, camera);
+
+    const objectsToTest = [object1, object2, object3];
+    const intersects = raycaster.intersectObjects(objectsToTest);
+
+    for (const object of objectsToTest) {
+      object.material.color.set('#ff0000');
+    }
+
+    if (intersects.length) {
+      if (!currentIntersect) {
+        console.log('mouse enter');
+      }
+
+      currentIntersect = intersects[0];
+    } else {
+      if (currentIntersect) {
+        console.log('mouse leave');
+      }
+
+      currentIntersect = null;
+    }
 
     // Update controls
     controls.update();
 
     // Render
     renderer.render(scene, camera);
+
+    // Call tick again on the next frame
+    window.requestAnimationFrame(tick);
   };
 
-  const renderer = new WebGLRenderer({ antialias: true });
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setAnimationLoop(animation);
+  renderer.setAnimationLoop(tick);
 
   targetDom.appendChild(renderer.domElement);
-};
+
+  tick();
+}
 
 function App() {
   const ref = useRef(null);
